@@ -1,6 +1,14 @@
 # star library
 
-A experiment c++ library
+A experiment c++20 library
+
+# Getting stared
+
+Install [xmake](https://xmake.io/), create your xmake.lua and add one line
+
+```lua
+includes("star")
+```
 
 # Feature
 
@@ -8,26 +16,29 @@ A experiment c++ library
 
 - Box
 
-    like unique_ptr
+    Like unique_ptr
+
 - Rc(reference counter)
 
-    like shared_ptr, but without `week_ptr` and **not thread-safe**
+    Like shared_ptr, but without `week_ptr` and **not thread-safe**
 
 ## container
 
-not thread-safe
+Not thread-safe
 
 - Buffer2D  
-    a 2D vector
+    A 2D vector
 
 ## useful tools
 
 - [Result](star/include/Result.hpp)
 
-    like [Rust result](https://doc.rust-lang.org/std/result/)
+    Like [Rust result](https://doc.rust-lang.org/std/result/)
+
 - [Timer](star/include/Timer.hpp)
 
     Measure the elapsed time between two code sections
+
 - [join](star/include/join.hpp)
 
-    compile time concatenate string
+    Compile time concatenate string

@@ -1,3 +1,5 @@
+#include <fstream>
+
 #include <io.hpp>
 
 std::tuple<std::unique_ptr<char[]>, usize> read_file(const std::string_view& filename)

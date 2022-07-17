@@ -1,10 +1,10 @@
 #include <fstream>
 
-#include <io.hpp>
+#include <star/io.hpp>
 
-std::tuple<std::unique_ptr<char[]>, usize> read_file(const std::string_view& filename)
+std::tuple<std::unique_ptr<char[]>, usize> read_file(const char* filename)
 {
-    std::ifstream in(filename.data(), std::ios::in | std::ios::ate);
+    std::ifstream in(filename, std::ios::in | std::ios::ate);
     if(in.fail()) return {nullptr, 0};
 
     const usize size = in.tellg();

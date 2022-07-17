@@ -5,9 +5,8 @@
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include <stb_image_write.h>
 
-
-#include <Image.hpp>
-#include <util.hpp>
+#include <star/Image.hpp>
+#include <star/util.hpp>
 
 std::optional<Image> Image::read(const std::string_view& filename)
 {

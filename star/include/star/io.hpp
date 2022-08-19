@@ -4,7 +4,7 @@
 #include <iostream>
 #include <tuple>
 
-using usize = std::size_t;
+#include "basic_type.hpp"
 
 std::tuple<std::unique_ptr<char[]>, usize> read_file(const char* filename);
 

@@ -2,7 +2,7 @@
 
 #include <ranges>
 
-using usize = std::size_t;
+#include "basic_type.hpp"
 
 #if defined(__clang__)
 template <std::integral T>
@@ -47,17 +47,17 @@ public:
     Enumerate(T it, usize step) : it(it), index(0), step(step),
         begin_(std::begin(it)), end_(std::end(it)) {}
 
-    const Enumerate& begin() const { return *this; }
-    const Enumerate& end()   const { return *this; }
+    Enumerate& begin() { return *this; }
+    Enumerate& end()   { return *this; }
 
-    bool operator != (const Enumerate&) const
+    auto operator != (const Enumerate&) const -> bool
     {
         return begin_ != end_;
     }
 
-    void operator ++ ()
+    auto operator ++ ()
     {
-        begin_ += 1;
+        begin_++;
         index  += step;
     }
 
@@ -87,10 +87,10 @@ public:
         , start_(find_first_not(0))
         , end_(sv.find(delim, start_)) {}
 
-    const split_iterator& begin() const { return *this; }
-    const split_iterator& end()   const { return *this; }
+    split_iterator& begin() { return *this; }
+    split_iterator& end()   { return *this; }
 
-    auto find_first_not(usize pos = 0) -> usize
+    auto find_first_not(usize pos = 0) const -> usize
     {
         for (usize i = pos; i < sv.size(); i += 1)
         {
@@ -99,13 +99,13 @@ public:
         return std::string_view::npos;
     };   
 
-    bool operator != (const split_iterator&)
+    auto operator != (const split_iterator&) const -> bool
     {
         return end_ != std::string_view::npos
             && start_ != std::string_view::npos;
     }
 
-    void operator ++ ()
+    auto operator ++ ()
     {
         start_ = find_first_not(end_);
         end_ = sv.find(delim, start_);

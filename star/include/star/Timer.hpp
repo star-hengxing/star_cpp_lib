@@ -3,8 +3,7 @@
 #include <iostream>
 #include <chrono>
 
-using f64 = double;
-using usize = std::size_t;
+#include "io.hpp"
 
 struct Timer
 {
@@ -16,23 +15,31 @@ public:
     Timer() : t0(std::chrono::steady_clock::now()) {}
 
     template <typename T>
-    static void display(T number, const std::string_view& unit)
+    static void display(T n)
     {
-        std::cout << "time elapsed: " << number << unit.data() << '\n';
+        print("time elapsed:");
+        if (n < 1000)
+        {
+            std::cout << ' ' << n << " ms" << '\n';
+        }
+        else
+        {
+            const auto seconds = static_cast<usize>(n);
+            const auto h = (seconds / 3600) % 24;
+            const auto m = (seconds / 60) % 60;
+            const auto s = seconds % 60;
+            if (h != 0) printf(" %lld hour", h);
+            if (m != 0) printf(" %lld minute", m);
+            if (s != 0) printf(" %lld second", s);
+            printf("\n");
+        }
     }
 
     void elapsed() const
     {
-        auto p = std::chrono::steady_clock::now() - t0;
-        f64 ms = std::chrono::duration_cast<f64_ms>(p).count();
-        if(ms < 1000)
-        {
-            display(ms, "ms");
-        }
-        else
-        {
-            display(static_cast<usize>(ms / 1000), "s");
-        }
+        const auto p = std::chrono::steady_clock::now() - t0;
+        const auto ms = std::chrono::duration_cast<f64_ms>(p).count();
+        display(ms);
     }
 
     template <typename T, typename... Args>

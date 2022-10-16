@@ -3,7 +3,7 @@
 #include <iostream>
 #include <chrono>
 
-#include "io.hpp"
+#include "basic_type.hpp"
 
 struct Timer
 {
@@ -17,7 +17,7 @@ public:
     template <typename T>
     static void display(T n)
     {
-        print("time elapsed:");
+        std::cout << "time elapsed:";
         if (n < 1000)
         {
             std::cout << ' ' << n << " ms" << '\n';
@@ -60,7 +60,7 @@ public:
     }
 
     template <typename T, typename U, typename... Args>
-    static U elapsed(T* this_ptr, U (T::*member_fn)(Args...), Args&&... args)
+    static auto elapsed(T* this_ptr, U (T::*member_fn)(Args...), Args&&... args)
     {
         Timer timer;
         if constexpr (std::is_same_v<U, void>)

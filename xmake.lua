@@ -2,10 +2,11 @@ set_project("my c++ library")
 
 set_version("0.0.1")
 
-set_toolchains("clang")
+set_warnings("all")
 set_languages("c++20")
+set_toolchains("clang")
 
-add_rules("mode.debug","mode.releasedbg", "mode.release", "mode.minsizerel")
+add_rules("mode.debug", "mode.releasedbg", "mode.release", "mode.minsizerel")
 
 includes("star")
 

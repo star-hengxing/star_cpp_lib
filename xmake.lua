@@ -4,7 +4,13 @@ set_version("0.0.1")
 
 set_warnings("all")
 set_languages("c++20")
-set_toolchains("clang")
+
+if is_os("windows") then
+    set_toolchains("clang-cl")
+    set_runtimes("MD")
+else
+    set_toolchains("clang")
+end
 
 add_rules("mode.debug", "mode.releasedbg", "mode.release", "mode.minsizerel")
 

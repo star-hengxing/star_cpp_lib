@@ -4,7 +4,6 @@
 
 #include "basic_type.hpp"
 
-#if defined(__clang__)
 template <std::integral T>
 struct range
 {
@@ -32,6 +31,18 @@ public:
 
     range() = delete;
 };
+
+constexpr auto split(const std::string_view& sv, const std::string_view& delim)
+{
+    return sv
+        | std::ranges::views::split(delim)
+        | std::ranges::views::transform([](auto&& rng)
+    {
+        return std::string_view(std::addressof(*rng.begin()), std::ranges::distance(rng));
+    });
+}
+
+#if defined(__clang__)
 
 template<typename T>
 struct Enumerate
@@ -73,71 +84,7 @@ auto enumerate(T& it, usize step = 1) -> Enumerate<T>
     return {std::forward<T>(it), step};
 }
 
-template <typename T>
-struct split_iterator
-{
-private:
-    const std::string_view& sv;
-    const T& delim;
-    usize start_, end_;
-
-public:
-    split_iterator(const std::string_view& sv, const T& delim)
-        : sv(sv), delim(delim)
-        , start_(find_first_not(0))
-        , end_(sv.find(delim, start_)) {}
-
-    split_iterator& begin() { return *this; }
-    split_iterator& end()   { return *this; }
-
-    auto find_first_not(usize pos = 0) const -> usize
-    {
-        for (usize i = pos; i < sv.size(); i += 1)
-        {
-            if (sv[i] != delim) return i;
-        }
-        return std::string_view::npos;
-    };   
-
-    auto operator != (const split_iterator&) const -> bool
-    {
-        return end_ != std::string_view::npos
-            && start_ != std::string_view::npos;
-    }
-
-    auto operator ++ ()
-    {
-        start_ = find_first_not(end_);
-        end_ = sv.find(delim, start_);
-        if(end_ == std::string_view::npos)
-        {
-            end_ = sv.size();
-        }
-    }
-
-    auto operator * () const -> std::string_view
-    {
-        return {&sv[start_], end_ - start_};
-    }
-};
-
-template <typename T>
-constexpr auto split(const std::string_view& sv, const T& delim)
-{
-    return split_iterator{sv, delim};
-}
 #else
-template <std::integral T>
-constexpr auto range(T end)
-{
-    return std::views::iota(static_cast<T>(0), end);
-}
-
-template <std::integral T>
-constexpr auto range(T start, T end)
-{
-    return std::views::iota(start, end);
-}
 
 template <typename T>
 struct enumerated_element
@@ -150,23 +97,13 @@ template <std::ranges::range T>
 constexpr auto enumerate(T& range, usize step = 1)
 {
     return range | std::views::transform(
-        [i = usize{}, step](auto& element) mutable
+        [index = usize{}, step](auto& element) mutable
         {
-            i += step;
-            return enumerated_element{i - step, element};
+            const auto tmp = index;
+            index += step;
+            return enumerated_element{tmp, element};
         }
     );
-}
-
-template <typename T>
-constexpr auto split(const std::string_view& sv, const T& delim)
-{
-    return sv
-        | std::ranges::views::split(delim)
-        | std::ranges::views::transform([](auto&& rng)
-    {
-        return std::string_view(std::addressof(*rng.begin()), std::ranges::distance(rng));
-    });
 }
 
 #endif // defined(__clang__)

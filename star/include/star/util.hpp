@@ -1,16 +1,16 @@
 #pragma once
 
-#include <source_location>
 #include <iostream>
-#include <ranges>
 
 #include "range.hpp"
 
-#ifdef NDEBUG
-#define dbg(expr) ((void)0)
-#else
-#define dbg(expr) std::cout<< '[' << std::source_location::current().file_name() << ':'<< std::source_location::current().line() << "] " << #expr << " = " << expr << '\n';
-#endif // NDEBUG
+inline void debug_marco(const char* path, int line, const char* function, const char* expr, const auto& value)
+{
+    printf("[%s:%d] %s: %s = ", path, line, function, expr);
+    std::cout << value << std::endl;
+}
+
+#define dbg(expr) debug_marco(__FILE__, __LINE__, __PRETTY_FUNCTION__, #expr, expr)
 
 template <std::ranges::range Container1, std::ranges::range Container2, std::copy_constructible Function>
 void map(const Container1& src, Container2& dst, Function f)

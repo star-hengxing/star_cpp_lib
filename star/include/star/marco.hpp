@@ -15,10 +15,11 @@
 #endif
 
 #ifdef _WIN32
-#ifdef LIBRARY_EXPORTS
+#ifdef LIBRARY_EXPORT
 #define LIBRARY_API __declspec(dllexport)
 #else
-#define LIBRARY_API __declspec(dllimport)
+// #define LIBRARY_API __declspec(dllimport)
+#define LIBRARY_API
 #endif
 #elif
 #define LIBRARY_API

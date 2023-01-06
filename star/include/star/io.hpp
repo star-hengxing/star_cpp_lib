@@ -5,17 +5,18 @@
 #include <tuple>
 
 #include "basic_type.hpp"
+#include "marco.hpp"
 
-std::tuple<std::unique_ptr<char[]>, usize> read_file(const char* filename);
+auto read_file(const char* filename) -> std::tuple<std::unique_ptr<char[]>, usize>;
 
 template <typename... Args>
-void println(const Args&... args)
+auto println(const Args&... args) -> void
 {
     ((std::cout << args << '\n'), ...);
 }
 
 template <typename... Args>
-void print(const Args&... args)
+auto print(const Args&... args) -> void
 {
     ((std::cout << args << ' '), ...);
 }

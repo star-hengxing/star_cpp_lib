@@ -2,7 +2,7 @@
 
 #include <star/io.hpp>
 
-std::tuple<std::unique_ptr<char[]>, usize> read_file(const char* filename)
+auto read_file(const char* filename) -> std::tuple<std::unique_ptr<char[]>, usize>
 {
     std::ifstream in(filename, std::ios::in | std::ios::ate);
     if (in.fail())

@@ -1,5 +1,6 @@
 #pragma once
 
+#include <source_location>
 #include <iostream>
 
 #include "range.hpp"
@@ -10,7 +11,10 @@ inline void debug_marco(const char* path, int line, const char* function, const 
     std::cout << value << std::endl;
 }
 
-#define dbg(expr) debug_marco(__FILE__, __LINE__, __PRETTY_FUNCTION__, #expr, expr)
+#define dbg(expr) debug_marco( \
+    std::source_location::current().file_name(), \
+    std::source_location::current().line(), \
+    std::source_location::current().function_name(), #expr, expr)
 
 template <std::ranges::range Container1, std::ranges::range Container2, std::copy_constructible Function>
 void map(const Container1& src, Container2& dst, Function f)

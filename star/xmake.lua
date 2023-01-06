@@ -1,25 +1,27 @@
-add_requires("stb", "lz4 1.9.3")
+option("image")
+    set_default(false)
+    set_showmenu(true)
+    set_description("Enable image component (default: false)")
+option_end()
+
+if has_config("image") then
+    add_requires("stb")
+end
 
 add_includedirs("include", {public = true})
 
-target("basic")
-    set_kind("static")
+target("star")
+    set_kind("$(kind)")
     add_files("src/io.cpp")
-
-target("image")
-    set_kind("static")
-    add_files("src/image.cpp")
-    add_packages("stb")
-
-    if is_os("windows") then
-        add_defines("_CRT_SECURE_NO_WARNINGS")
+    if has_config("image") then
+        add_files("src/image.cpp")
+        add_packages("stb")
+        if is_host("windows") then
+            add_defines("_CRT_SECURE_NO_WARNINGS")
+        end
     end
 
-target("compression")
-    set_kind("static")
-    add_files("src/Asset/*.cpp")
-    add_packages("lz4")
-
-target("star")
-    set_kind("static")
-    add_deps("basic", "image", "compression")
+    if is_kind("shared") and is_plat("windows") then
+        add_rules("utils.symbols.export_all", {export_classes = true})
+    end
+target_end()

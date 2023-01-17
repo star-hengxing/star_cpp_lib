@@ -2,18 +2,27 @@
 
 #include <cstdint>
 #include <utility>
+#include <tuple>
 
 template <typename T>
 struct Box
 {
 private:
-    T* ptr;
+    using value_type = std::remove_all_extents_t<T>;
+    using pointer = value_type*;
+    using reference = value_type&;
+    using const_pointer = const value_type*;
+    using const_reference = const value_type&;
+    using Self = Box;
+
+private:
+    pointer ptr;
 
     template <typename T2>
     friend struct Box;
 
 public:
-    constexpr Box(T* ptr = nullptr) : ptr(ptr) {}
+    constexpr Box(pointer ptr = nullptr) : ptr(ptr) {}
 
     Box(const Box<T>&) = delete;
     Box<T>& operator = (const Box<T>&) = delete;
@@ -25,7 +34,7 @@ public:
     }
 
     template <typename T2>
-    Box& operator = (Box<T2>&& box) noexcept
+    auto operator = (Box<T2>&& box) noexcept -> Self&
     {
         Box(std::move(box)).swap(*this);
         return *this;
@@ -35,39 +44,73 @@ public:
     {
         if(ptr != nullptr)
         {
-            delete ptr;
+            if constexpr (std::is_array_v<T>)
+                delete[] ptr;
+            else
+                delete ptr;
+
             ptr = nullptr;
         }
     }
 
     template <typename... Args>
-    static Box<T> make(Args&&... args)
+    requires (!std::is_array_v<T>)
+    static auto make(Args&&... args) -> Self
     {
-        return {new T(std::forward<Args>(args)...)};
+        return {new value_type{std::forward<Args>(args)...}};
+    }
+
+    template <typename T2 = T>
+    requires std::is_array_v<T>
+    static auto make(size_t size) -> Self
+    {
+        return {new value_type[size]{}};
     }
 
     template <typename T2>
-    void swap(Box<T2>& box)
+    auto swap(Box<T2>& box) -> void
     {
-        std::swap(ptr, box.ptr);
+        using std::swap;
+        swap(ptr, box.ptr);
     }
 
-    T* get() const noexcept
+    auto get() const noexcept -> pointer
     {
         return ptr;
     }
 
-    T operator * () const noexcept
+    auto get_owner() noexcept -> pointer
     {
-        return *get();
+        auto tmp = ptr;
+        ptr = nullptr;
+        return tmp;
     }
 
-    T* operator -> () const noexcept
+    template <typename T2 = T>
+    requires std::is_array_v<T>
+    auto operator [] (size_t index) noexcept -> reference
     {
-        return get();
+        return ptr[index];
     }
 
-    operator bool () const
+    template <typename T2 = T>
+    requires std::is_array_v<T>
+    auto operator [] (size_t index) const noexcept -> value_type
+    {
+        return ptr[index];
+    }
+
+    auto operator * () const noexcept -> value_type
+    {
+        return *ptr;
+    }
+
+    auto operator -> () const noexcept -> pointer
+    {
+        return ptr;
+    }
+
+    operator bool () const noexcept
     {
         return ptr != nullptr;
     }

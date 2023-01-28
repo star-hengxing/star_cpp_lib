@@ -1,22 +1,30 @@
 #pragma once
 
 #include <iostream>
-#include <memory>
 #include <tuple>
 
 #include "basic_type.hpp"
 #include "marco.hpp"
+#include "Box.hpp"
 
-auto read_file(const char* filename) -> std::tuple<std::unique_ptr<char[]>, usize>;
+NAMESPACE_BEGIN(io)
 
-template <typename... Args>
-auto println(const Args&... args) -> void
+NAMESPACE_BEGIN(file)
+
+auto read(const char* filename) -> std::tuple<Box<char[]>, usize>;
+
+NAMESPACE_END(file)
+
+auto println(const auto&... args) -> void
 {
     ((std::cout << args << '\n'), ...);
 }
 
-template <typename... Args>
-auto print(const Args&... args) -> void
+auto print(const auto&... args) -> void
 {
-    ((std::cout << args << ' '), ...);
+    auto i = sizeof...(args);
+    const auto delim = [&i] { i -= 1; return (i != 0) ? " " : ""; };
+    ((std::cout << args << delim()), ...);
 }
+
+NAMESPACE_END(io)

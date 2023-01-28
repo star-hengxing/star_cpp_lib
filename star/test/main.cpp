@@ -2,5 +2,5 @@
 
 int main()
 {
-    println("hello world!");
+    io::println("hello world!");
 }

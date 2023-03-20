@@ -2,7 +2,6 @@
 
 #include <cstdint>
 #include <utility>
-#include <tuple>
 
 template <typename T>
 struct Box
